@@ -6,16 +6,16 @@ class Field:
         self._value = None
 
     #getter
-    def value(self):
+    def get_value(self):
         return self._value
 
     #setter
-    def value(self, new_value):
+    def set_value(self, new_value):
         self._value = new_value
 
 
 class Phone(Field): #перевірка на п-сть для поля phone
-    def value(self, new_value):
+    def set_value(self, new_value):
         if self._is_valid_phone(new_value):
             self._value = new_value
         else:
@@ -42,8 +42,8 @@ class Birthday(Field): #перевірка на п-сть для поля birthd
             return birthday
         return None
     
-    def value(self, new_value):
-        valid_birthday = self._valid_birthday(new_value)
+    def set_value(self, new_value):
+        valid_birthday = self._is_valid_birthday(new_value)
         if valid_birthday:
             self._value = valid_birthday
         else:
@@ -68,7 +68,7 @@ class Record:
             return None
 
 
-class AddressBook:
+class AddressBook: # пагінація #метод iterator, який за одну ітерацію повертає представлення для N записів
     def __init__(self):
         self.records = []
 
@@ -79,43 +79,23 @@ class AddressBook:
         self.records.remove(record)
 
     def __iter__(self):
-        return iter(self.records)
+        return self.iterator()
+
+    def iterator(self, n=1):
+        count = 0
+        current_index = 0
+
+        while count < len(self.records):
+            if current_index >= len(self.records):
+                current_index = 0
+            yield self.records[current_index]
+            count += 1
+            current_index += 1
+
+            if count % n == 0:
+                break
 
     def get_records(self, page_number, page_size):
         start_index = (page_number - 1) * page_size
         end_index = start_index + page_size
         return self.records[start_index:end_index]
-
-
-# Пример использования классов и методов
-
-# Создаем экземпляры записей
-record1 = Record("John Doe", Phone(), Birthday())
-record1.phone.value = "1234567890"
-record1.birthday.value = datetime.date(1990, 5, 10)
-
-record2 = Record("Jane Smith", Phone(), Birthday())
-record2.phone.value = "9876543210"
-record2.birthday.value = datetime.date(1985, 10, 20)
-
-# екземпляр адресної книги
-address_book = AddressBook()
-
-# додаємо записи
-address_book.add_record(record1)
-address_book.add_record(record2)
-
-# к-сть днів до д.р.
-for record in address_book:
-    days = record.days_to_birthday()
-    if days is not None:
-        print(f"Days to birthday for {record.name}: {days}")
-    else:
-        print(f"No birthday set for {record.name}")
-
-# пагінаця
-page_number = 1
-page_size = 1
-records = address_book.get_records(page_number, page_size)
-for record in records:
-    print(record.name, record.phone.value, record.birthday.value)
