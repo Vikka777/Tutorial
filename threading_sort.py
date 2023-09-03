@@ -3,7 +3,7 @@ import shutil
 import threading
 from pathlib import Path
 
-# Функція, яка сортує файли у папці за розширеннями
+#Sorting by extensions
 def sort_folder(folder):
     for filename in os.listdir(folder):
         extension = filename.split('.')[-1].upper()
@@ -21,7 +21,7 @@ def sort_folder(folder):
         else:
             shutil.move(os.path.join(folder, filename), os.path.join(folder, 'unknown', filename))
 
-# Функція нормалізації імен файлів
+#Normalization
 import re
 
 def normalize_filename(file_path):
@@ -32,7 +32,6 @@ def normalize_filename(file_path):
         new_path = file.with_name(new_name)
         file.rename(new_path)
 
-# Функція для обробки кожного підкаталогу
 def process_subfolder(subfolder):
     sort_folder(subfolder)
     for item in os.listdir(subfolder):
@@ -41,20 +40,18 @@ def process_subfolder(subfolder):
             process_subfolder(item_path)
 
 if __name__ == '__main__':
-    folder_path = '/папка/Мотлох'  # Вкажіть шлях до папки "Мотлох" тут
-    num_threads = 4  # Кількість потоків, які ви бажаєте використовувати
+    folder_path = '/home/users/vika/Desktop-Local/Files'  # Шлях до папки
+    num_threads = 4
 
-    # Створюємо потоки
+    #Threads
     threads = []
     for _ in range(num_threads):
         thread = threading.Thread(target=process_subfolder, args=(folder_path,))
         threads.append(thread)
 
-    # Запускаємо потоки
     for thread in threads:
         thread.start()
 
-    # Очікуємо завершення потоків
     for thread in threads:
         thread.join()
 
