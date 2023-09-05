@@ -6,7 +6,7 @@ from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
-# F. for processing data and record it from data.json
+    # F. for processing data and record it from data.json
 def save_data_to_json(data):
     try:
         with open('storage/data.json', 'r') as file:
@@ -15,10 +15,13 @@ def save_data_to_json(data):
         data_dict = {}
     
     timestamp = str(datetime.now())
-    data_dict[timestamp] = data
 
-    with open('storage/data.json', 'w') as file:
-        json.dump(data_dict, file, indent=4)
+    if timestamp not in data_dict:
+        data_dict[timestamp] = data
+
+        with open('storage/data.json', 'w') as file:
+            json.dump(data_dict, file, indent=4)
+
 
 # F. for sending data to Socket service
 def send_data_to_socket(data):
