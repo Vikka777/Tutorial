@@ -1,0 +1,20 @@
+[
+    {
+        "fullname": "Stephen Glenn Martin",
+        "born_date": "1945-08-14",
+        "born_location": "Waco, Texas, USA",
+        "description": "American actor, comedian, writer, and musician."
+    },
+    {
+        "fullname": "Albert Einstein",
+        "born_date": "1879-03-14",
+        "born_location": "Ulm, Kingdom of Württemberg, German Empire",
+        "description": "Theoretical physicist known for the theory of relativity."
+    },
+    {
+        "fullname": "William Shakespeare",
+        "born_date": "1564-04-26",
+        "born_location": "Stratford-upon-Avon, England",
+        "description": "English playwright and poet, widely regarded as the greatest writer in the English language."
+    }
+]
