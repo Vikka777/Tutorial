@@ -1,0 +1,17 @@
+[
+    {
+        "tags": ["life", "humor"],
+        "author": "Steve Martin",
+        "quote": "Life is too important to be taken seriously."
+    },
+    {
+        "tags": ["imagination", "knowledge"],
+        "author": "Albert Einstein",
+        "quote": "Imagination is more important than knowledge."
+    },
+    {
+        "tags": ["life", "philosophy"],
+        "author": "William Shakespeare",
+        "quote": "To be or not to be, that is the question."
+    }
+]
