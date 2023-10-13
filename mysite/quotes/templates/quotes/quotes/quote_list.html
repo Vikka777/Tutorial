@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Page title{% endblock %}
+
+{% block content %}
+    <h1>Quotes List</h1>
+    <ul>
+        {% for quote in quotes %}
+            <li>{{ quote.text }} - {{ quote.author.name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
