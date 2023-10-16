@@ -1,30 +1,34 @@
-# quotes/views.py
 from django.shortcuts import render, redirect
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Count
+import requests
+from bs4 import BeautifulSoup
 from .models import Author, Quote, Tag
 from .forms import RegistrationForm, LoginForm, AuthorForm, QuoteForm
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count
 
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-    else:
-        form = RegistrationForm()
-    return render(request, 'registration/register.html', {'form': form})
+def scrape_quotes(request):
+    url = "http://quotes.toscrape.com/"
+    response = requests.get(url)
 
-def login_view(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            # Виконайте аутентифікацію користувача тут
-            return redirect('dashboard')
-    else:
-        form = LoginForm()
-    return render(request, 'registration/login.html', {'form': form})
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        quotes = soup.find_all("span", class_="text")
+        authors = soup.find_all("span", class_="small")
+        tags = soup.find_all("a", class_="tag")
+
+        for quote, author, tag in zip(quotes, authors, tags):
+            quote_text = quote.get_text()
+            author_name = author.get_text()
+            tag_name = tag.get_text()
+
+            author, created = Author.objects.get_or_create(name=author_name)
+            quote = Quote.objects.create(text=quote_text, author=author)
+            tag, created = Tag.objects.get_or_create(name=tag_name)
+            quote.tags.add(tag)
+
+    return redirect('quote_list')
 
 @login_required
 def add_author(request):
@@ -50,26 +54,25 @@ def add_quote(request):
         form = QuoteForm()
     return render(request, 'add_quote.html', {'form': form})
 
-def quotes_by_tag(request, tag):
-    quotes = Quote.objects.filter(tags__name__iexact=tag)
+def quote_list(request):
+    quotes = Quote.objects.all()
     paginator = Paginator(quotes, 10)
     page = request.GET.get('page')
+
     try:
         quotes = paginator.page(page)
     except PageNotAnInteger:
         quotes = paginator.page(1)
     except EmptyPage:
         quotes = paginator.page(paginator.num_pages)
-    context = {'quotes': quotes, 'tag': tag}
-    return render(request, 'quotes/quotes_by_tag.html', context)
+
+    return render(request, 'quotes/quote_list.html', {'quotes': quotes})
 
 def top_ten_tags(request):
     tags = Tag.objects.annotate(quote_count=Count('quote')).order_by('-quote_count')
-    
-    paginator = Paginator(tags, 10)
-    
+    paginator = Paginator(tags, 10)  # 10 тегів на сторінку
     page = request.GET.get('page')
-    
+
     try:
         tags = paginator.page(page)
     except PageNotAnInteger:
@@ -77,5 +80,4 @@ def top_ten_tags(request):
     except EmptyPage:
         tags = paginator.page(paginator.num_pages)
 
-    context = {'tags': tags}
-    return render(request, 'quotes/top_ten_tags.html', context)
+    return render(request, 'quotes/top_ten_tags.html', {'tags': tags})
