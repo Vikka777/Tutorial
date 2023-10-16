@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Quotes_by_tag: {{ tag }}{% endblock %}
+
+{% block content %}
+    <h1>Quotes_by_tag: {{ tag }}</h1>
+    <ul>
+        {% for quote in quotes %}
+            <li>{{ quote.text }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
