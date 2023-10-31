@@ -1,0 +1,12 @@
+{% extends 'quotes/base.html' %}
+
+{% block title %}Top Ten Tags{% endblock %}
+
+{% block content %}
+    <h1>Top Ten Tags</h1>
+    <ul>
+        {% for tag in tags %}
+            <li>{{ tag.name }} ({{ tag.quote_count }} цитат)</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
